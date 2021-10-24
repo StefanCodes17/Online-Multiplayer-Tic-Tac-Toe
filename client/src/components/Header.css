@@ -1,0 +1,33 @@
+.header__text{
+    width: 100%;
+    font-size: 1.3em;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.title__container{
+    width: fit-content;
+    position: relative;
+    margin: 0 auto;
+}
+
+.title__container > h2 > sup{
+    margin-left: -10px;
+}
+
+.title__container > h4{
+    font-size: 0.7em;
+    color: rgba(111, 111, 111, 0.9);
+    position: absolute;
+    right: -10px;
+}
+
+.btn__leaderboard{
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    text-decoration: none;
+    color: black;
+    font-size: 0.7em;
+    font-weight: bold;
+}

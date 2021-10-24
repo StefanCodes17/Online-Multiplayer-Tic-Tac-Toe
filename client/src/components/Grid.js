@@ -1,20 +1,38 @@
 
+import { useEffect, useState } from 'react';
 import './Grid.css'
 
-const template = {
-    gameID: 'n8dg12h9d8t3178d91',
-    playerTurn: 0, // 0 - (n-1) /* references index in socket player array
-    boardState: [
-        ['X', 'O', 'X'],
-        ['O', 'X', 'X'],
-        ['O', ' ', ' ']
-    ]
-}
+const Grid = ({size, temp})=> {
 
-const Grid = ({size})=> {
-    return(
-        <div className="grid__container">
-            {template.boardState.map((row, row_idx)=>{
+    const [boardObj, setBoardObj] = useState({
+        boardState: []
+    })
+
+    function generateBoard(){
+        const tempBoardState = []
+        let randomNumber;
+        let map =  ['X', 'O']
+        for(let i = 0; i < size; i++ ){
+            let tempRow = []
+            for(let j = 0; j < size; j++){
+                randomNumber = Math.floor(Math.random() * 2)
+                tempRow.push(map[randomNumber])
+            }
+            tempBoardState.push(tempRow)
+        }
+        setBoardObj({boardState: tempBoardState})
+    }
+
+    useEffect(()=>{
+        generateBoard()
+    }, [size])
+
+    return (
+        <div className="grid__container" style={{
+            gridTemplateColumns: `repeat(${size}, minmax(90px, 1fr))`,
+            gridTemplateRows: `repeat(${size}, minmax(90px, 1fr))`
+            }}>
+            {boardObj.boardState.map((row, row_idx)=>{
                 return row.map((col, col_idx) =>{
                     return (
                         <div className="cell" key={row_idx+col_idx}>{col}</div>

@@ -9,9 +9,10 @@
     padding: 15px;
     display: grid;
     place-items: center;
+    border: 0.5px solid black;
 }
 
-/* Border Styling */
+/* Border Styling 
 .grid__container>.cell:nth-child(1){
     border-right: 0.5px solid black;
     border-bottom: 0.5px solid black;
@@ -40,3 +41,5 @@
 .grid__container>.cell:nth-child(8){
     border-right: 0.5px solid black;
 }
+
+*/

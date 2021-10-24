@@ -1,21 +1,22 @@
 
+//Components
 import Grid from '../components/Grid.js'
+import Header from '../components/Header'
+import Button from '../components/Button'
+import {Link} from 'react-router-dom'
 
 import './Home.css'
 
 const Home = ()=>{
     return (
         <div className="home__container">
-            <div className="header__text">
-                <h2> Tic Tac Toe <sup>n</sup></h2>
-                <h4>By Stefan Kolev</h4>
-            </div>
+            <Header/>
             <div className="grid__area">
                 <Grid size={3}/>
             </div>
             <div className="button__area">
-                <button>Single Player</button>
-                <button>Multiplayer</button>
+               <Link to="/settings"><Button text="Single Player"/></Link>
+                <Button text="Multiplayer"/>
             </div>
         </div>
     );

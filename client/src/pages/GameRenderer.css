@@ -1,0 +1,38 @@
+.sub__header{
+    width: fit-content;
+    margin: 35px auto 10px auto;
+}
+
+.game__viewer{
+    display: grid;
+    width: 100vw;
+    grid-template-columns: repeat(auto-fill, minmax(650px, 1fr));
+    gap: 10px;
+}
+
+.settings__panel{
+    text-align: center;
+}
+
+form{
+    border: 2px solid black;
+    padding: 10px 50px;
+    width: fit-content;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+form > select{
+    min-width: 100px;
+    text-align: center;
+    border: 2px solid black;
+    font-weight: bold;
+    margin: 5px 0px 10px 0px; 
+}
+
+.game__showcase{
+    margin: 35px auto 10px auto;
+}

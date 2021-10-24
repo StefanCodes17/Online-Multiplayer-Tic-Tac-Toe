@@ -1,0 +1,33 @@
+button{
+    background: transparent;
+    border: 2px solid black;
+    padding: 6px 9px;
+    font-weight: bold;
+    margin-top: 25px;
+    position: relative;
+    transition: color 0.3s;
+}
+
+button::before{
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 102%;
+    background: black;
+    top: 0;
+    left: -1px;
+    transition: width 0.4s ease-in-out;
+}
+
+button:hover{
+    color: white;
+    cursor: pointer;
+    z-index: 1;
+}
+
+button:hover::before{
+    color: white;
+    /*cursor: pointer; */
+    width: 102%;
+    z-index: -1;
+}
