@@ -1,0 +1,42 @@
+.grid__container{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(90px, 1fr));
+    grid-template-rows: repeat(3, minmax(90px, 1fr))
+}
+
+.cell{
+    font-size: 1.7em;
+    padding: 15px;
+    display: grid;
+    place-items: center;
+}
+
+/* Border Styling */
+.grid__container>.cell:nth-child(1){
+    border-right: 0.5px solid black;
+    border-bottom: 0.5px solid black;
+}
+.grid__container>.cell:nth-child(2){
+    border-right: 0.5px solid black;
+    border-bottom: 0.5px solid black;
+}
+.grid__container>.cell:nth-child(3){
+    border-bottom: 0.5px solid black;
+}
+.grid__container>.cell:nth-child(4){
+    border-bottom: 0.5px solid black;
+    border-right: 0.5px solid black;
+}
+.grid__container>.cell:nth-child(5){
+    border-bottom: 0.5px solid black;
+    border-right: 0.5px solid black;
+}
+.grid__container>.cell:nth-child(6){
+    border-bottom: 0.5px solid black;
+}
+.grid__container>.cell:nth-child(7){
+    border-right: 0.5px solid black;
+}
+.grid__container>.cell:nth-child(8){
+    border-right: 0.5px solid black;
+}
