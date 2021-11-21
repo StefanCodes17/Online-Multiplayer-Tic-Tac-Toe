@@ -1,11 +1,17 @@
-import {useState} from 'react'
+import {useState, useEffect, useContext} from 'react'
+import { SocketContext } from '../context/SocketContext';
+
+import {useHistory} from 'react-router-dom'
 
 import Header from '../components/Header';
 import Button from '../components/Button'
 import Grid from '../components/Grid'
-import './GameRenderer.css'
+import './Settings.css'
 
-const GameRenderer = ()=>{
+const GameRenderer = (props)=>{
+
+    let history = useHistory()
+    const socket = useContext(SocketContext)
 
     const [formState, setFormState] = useState({
         grid_size: 4,
@@ -15,14 +21,15 @@ const GameRenderer = ()=>{
     const selectChangeHandler = (e)=>{
         const newFormData = {
             ...formState,
-            [e.target.name] : e.target.value
+            [e.target.name] : parseInt(e.target.value)
         }
         setFormState(newFormData)
     }
 
     const submitHandler = (e)=>{
         e.preventDefault();
-        console.log(formState);
+        socket.emit('singleplayer', formState)
+        history.push('/single/2')
     }
 
     return (
@@ -50,7 +57,7 @@ const GameRenderer = ()=>{
                         </form>
                 </div>
                 <div className="game__showcase">
-                    <Grid size={formState['grid_size']} />
+                    <Grid size={formState['grid_size']} temp={true} />
                 </div>
             </div>
         </div>

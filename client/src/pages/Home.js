@@ -12,7 +12,7 @@ const Home = ()=>{
         <div className="home__container">
             <Header/>
             <div className="grid__area">
-                <Grid size={3}/>
+                <Grid size={3} temp={true}/>
             </div>
             <div className="button__area">
                <Link to="/settings"><Button text="Single Player"/></Link>
