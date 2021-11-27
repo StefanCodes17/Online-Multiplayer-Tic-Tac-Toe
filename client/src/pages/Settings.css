@@ -33,6 +33,10 @@ form > select{
     margin: 5px 0px 10px 0px; 
 }
 
+form > button{
+    margin-top: 25px;
+}
+
 .game__showcase{
     margin: 35px auto 10px auto;
 }

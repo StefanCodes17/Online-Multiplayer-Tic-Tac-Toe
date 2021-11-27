@@ -1,21 +1,27 @@
-import {useState, useEffect, useContext} from 'react'
+import {useState, useContext} from 'react'
 import { SocketContext } from '../context/SocketContext';
 
+//React Router
 import {useHistory} from 'react-router-dom'
 
+//Components
 import Header from '../components/Header';
 import Button from '../components/Button'
 import Grid from '../components/Grid'
+
+//Utils
+import { GenerateTemplateBoard } from '../utils/GridUtils';
+
 import './Settings.css'
 
-const GameRenderer = (props)=>{
+const Settings = (props)=>{
 
     let history = useHistory()
     const socket = useContext(SocketContext)
 
     const [formState, setFormState] = useState({
-        grid_size: 4,
-        time_per_action: 2
+        grid_size: 3,
+        time_per_action: 2,
     })
 
     const selectChangeHandler = (e)=>{
@@ -28,12 +34,13 @@ const GameRenderer = (props)=>{
 
     const submitHandler = (e)=>{
         e.preventDefault();
-        socket.emit('singleplayer', formState)
-        history.push('/single/2')
+        let gameMode = window.location.pathname.split('/')[2]
+        socket.emit(gameMode, formState)
+        //history.push(f`/${gameMode}/2`)
     }
 
     return (
-        <div className="gamerend__container">
+        <div className="settings__container">
             <Header/>
             <div className="game__viewer">
                 <div className="settings__panel">
@@ -57,11 +64,11 @@ const GameRenderer = (props)=>{
                         </form>
                 </div>
                 <div className="game__showcase">
-                    <Grid size={formState['grid_size']} temp={true} />
+                    <Grid board={GenerateTemplateBoard(formState['grid_size'])}/>
                 </div>
             </div>
         </div>
     );
 }
 
-export default GameRenderer;
+export default Settings;

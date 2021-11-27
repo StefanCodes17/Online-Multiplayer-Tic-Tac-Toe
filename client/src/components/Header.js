@@ -6,9 +6,10 @@ const Header = ()=>{
         <div className="header__text">
             <div className="title__container">
                 <h2> Tic Tac Toe <sup>n</sup></h2>
-                <h4>By Stefan Kolev</h4>
+                <h4>Evolve your game</h4>
             </div>
-            <a href="#" className="btn__leaderboard">Leaderboard</a>
+            {/*Implement a leaderboard modal */}
+            <a href="/" className="btn__leaderboard">Leaderboard</a>
         </div>
     )
 }

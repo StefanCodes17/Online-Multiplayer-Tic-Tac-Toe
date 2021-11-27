@@ -19,7 +19,7 @@ const Game = ()=>{
     const makeMove = (row, col, setState)=>{
         setGameState(() =>{
             let newGameState = gameState
-            newGameState.boardState[row][col] = 'X'
+            newGameState.boardState[row][col] = gameState.symbol
             return newGameState
         })
         socket.emit("move", gameState)
@@ -38,8 +38,8 @@ const Game = ()=>{
         <>
         <Header/>
         <div className="game__container">
-            <div className="player_turn">{`${gameState.playerTurn == 0 ? "Your turn" : "AI's turn"}`}</div>
-            <Grid temp={false} req={gameState} size={gameState.boardState.length} active={true} clickEvent={makeMove}></Grid>
+            <div className="player_turn">{`${gameState.playerTurn === 0 ? "Your turn" : "AI's turn"}`}</div>
+            <Grid board={gameState} active={gameState.playerTurn === 0} clickEvent={makeMove}></Grid>
         </div>
         </>
     )

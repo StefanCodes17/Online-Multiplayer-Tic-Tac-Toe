@@ -4,9 +4,12 @@ import {
   Route,
 } from "react-router-dom";
 
+//Socket.io
 import {SocketProvider} from './context/SocketContext';
+
+//Pages
 import Home from './pages/Home.js'
-import GameRenderer from './pages/Settings'
+import Settings from './pages/Settings'
 import Game from './pages/Game'
 
 import './App.css';
@@ -18,8 +21,9 @@ function App() {
       <div className="App">
        <Router>
         <Switch>
-           <Route path="/settings"><GameRenderer/></Route>
+           <Route path="/settings"><Settings/></Route>
            <Route path="/single/:id"><Game/></Route>
+           <Route path="/multiplayer/:id"><Game/></Route>
            <Route path="/"> <Home/> </Route>
         </Switch>
        </Router>
