@@ -12,13 +12,21 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+const initializeGame = ()=>{
+  return {
+    gameID: uuidv4()
+  }
+}
+
 //Middleware
-const initialzeSinglePlayerGame = (grid_size) =>{
-  if(!grid_size) return null
+const initialzeSinglePlayerGame = (grid_size, intializingPlayer) =>{
+  if(!grid_size || !intializingPlayer) return null
+  let map = ['X', 'O']
   let boardState = new Array(grid_size).fill(' ').map(() => new Array(grid_size).fill(' '));
   return {
-    boardState: boardState,
-    playerTurn: 0,
+    boardState,
+    playerTurn: intializingPlayer,
+    playerSymbol: map[Math.floor((Math.random() * 2))]
   }
 }
 
@@ -27,7 +35,6 @@ const initialzeMultiplayerGame = (grid_size) =>{
   let boardState = new Array(grid_size).fill(' ').map(() => new Array(grid_size).fill(' '));
   return {
     boardState: boardState,
-    playerTurn: 0,
     currentSymbol: 'X'
   }
 }
@@ -182,16 +189,19 @@ function getActiveRooms(io) {
 }
 
 io.on('connection', (socket) => {
-  console.log("A user has connected")
-
+  console.log(`${socket.id} has connected`)
+  socket.on("disconnect", ()=>{
+    console.log(`Socket ${socket.id} has disconnected`)
+  })
   socket.on('singleplayer',(res)=>{
-    let {grid_size, time_per_action} = res
     console.log("User has requested to play a singelplayer mode")
-    socket.emit("initializeGame", initialzeSinglePlayerGame(grid_size))
+    socket.emit("initializeGame", initializeGame())
+    socket.emit("initializeBoard", initialzeSinglePlayerGame(res.grid_size, res.socketID))
     socket.on("move", (res)=>{
-      let [x, y] = findBestMove(res.boardState)
-      res.boardState[x][y] = 'O'
-      socket.emit("move", res)
+      console.log(res)
+      //let [x, y]= findBestMove(res.boardState)
+      //res.boardState[x][y] = 'O'
+      //socket.emit("move", res)
     })
   })
 
@@ -209,15 +219,19 @@ io.on('connection', (socket) => {
       if(!room) room = uuidv4();
     }
     socket.join(room)
-    console.log(room)
-    socket.emit("initializeGame", {...initialzeMultiplayerGame(grid_size), game: room})
+    const [first, second] = io.sockets.adapter.rooms.get(room).values()
+    const size = io.sockets.adapter.rooms.get(room).size
+    socket.emit("getGameID", {gameID: room})
+    socket.nsp.to(room).emit("getGameState", {...initialzeMultiplayerGame(grid_size), playerTurn: first, gameID: room, playersOnline: size})
+    socket.emit("getGameState", {...initialzeMultiplayerGame(grid_size), playerTurn: first, gameID: room, playersOnline: size})
     socket.on("move", (res)=>{
-      res.playerTurn = (res.playerTurn + 1) % 2
-      res.currentSymbol = map[res.playerTurn]
-      socket.nsp.to(room).emit("move", res)
+      //res.playerTurn = (res.playerTurn + 1) % 2
+      //res.currentSymbol = map[res.playerTurn]
+      //socket.nsp.to(room).emit("move", res)
     })
   })
 });
+
 
 server.listen(4000, () => {
   console.log('listening on *:4000');

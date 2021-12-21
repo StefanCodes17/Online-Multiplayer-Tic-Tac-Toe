@@ -22,7 +22,7 @@ function App() {
        <Router>
         <Switch>
            <Route path="/settings"><Settings/></Route>
-           <Route path="/single/:id"><Game/></Route>
+           <Route path="/singleplayer/:id"><Game/></Route>
            <Route path="/multiplayer/:id"><Game/></Route>
            <Route path="/"> <Home/> </Route>
         </Switch>

@@ -18,10 +18,12 @@ const Settings = (props)=>{
 
     let history = useHistory()
     const socket = useContext(SocketContext)
+    if(!socket) history.push("/")
 
     const [formState, setFormState] = useState({
         grid_size: 3,
         time_per_action: 2,
+        socketID: socket && socket.id
     })
 
     const selectChangeHandler = (e)=>{
@@ -35,8 +37,9 @@ const Settings = (props)=>{
     const submitHandler = (e)=>{
         e.preventDefault();
         let gameMode = window.location.pathname.split('/')[2]
-        socket.emit(gameMode, formState)
-        //history.push(f`/${gameMode}/2`)
+        socket.emit(gameMode, formState).on("getGameID",(res)=>{
+            history.push(`/${gameMode}/${res.gameID}`)
+        })
     }
 
     return (
