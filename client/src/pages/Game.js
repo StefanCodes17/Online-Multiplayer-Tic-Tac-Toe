@@ -2,11 +2,12 @@ import { useEffect, useContext, useState } from 'react';
 import ReactLoading from 'react-loading';
 import { SocketContext } from '../context/SocketContext';
 
-import {useHistory} from 'react-router-dom'
+import {useHistory, Link} from 'react-router-dom'
 
 
 import Grid from '../components/Grid'
 import Header from '../components/Header';
+import Button from '../components/Button'
 
 import './Game.css'
 
@@ -29,6 +30,21 @@ const Loading = ()=>{
     )
 }
 
+const ResultsModal = ({playerWin, tie})=> {
+    const socket = useContext(SocketContext)
+    return(
+        <div className='modal__container'>
+            <div className='modal__text'>
+                <h1>{playerWin === socket.id ? "You win!" : tie ? "It's a tie!" : "You lost!" }</h1>
+                <div className='btn__display'>
+                <Link to="/"><Button text="Home"/></Link>
+                <Link to="/settings"><Button text="Play Again!"/></Link>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const Game = ()=>{
     let history = useHistory()
 
@@ -37,40 +53,31 @@ const Game = ()=>{
 
     const [gameState, setGameState] = useState(null)
 
-            
-    const makeMove = (row, col)=>{
-        console.log("Making a move")
-        //setGameState(() =>{
-           // let newGameState = gameState
-           // newGameState.boardState[row][col] = gameState.playerSymbol
-           // return newGameState
-       // })
-       // socket.emit("move", gameState)
-    }
-
     useEffect(()=>{
         let mounted = socket && true
         if(mounted){
             socket.on("getGameState", (res)=>{
                 setGameState(res)
-                console.log(res)
-            })
-            socket.on("move", (res)=>{
-                console.log(res)
-                //setGameState(res)
             })
         }
         return () => mounted = false
     }, [socket, gameState])
+
+            
+    const makeMove = (row, col)=>{
+        socket.emit("move", {...gameState, row, col})
+    }
+
     return gameState &&(
         <>
         {gameState.playersOnline === 2?        
         <>
             <Header/>
             <div className="game__container">
-                <div className="player_turn">{`${gameState.playerTurn === socket.id ? "Your turn" : "Other player's turn"}`}</div>
-                <Grid board={gameState.boardState} active={gameState.playerTurn === socket.id} clickEvent={makeMove}></Grid>
+                <div className="player_turn">{`${gameState.playerTurn === socket.id ? "Your turn" : "Opponent's turn"}`}</div>
+                <Grid board={gameState.boardState} active={!gameState.win && gameState.playerTurn === socket.id} clickEvent={makeMove}></Grid>
             </div> 
+            {gameState.win && <ResultsModal playerWin = {gameState.playerWin} tie={gameState.tie}/>}
         </> : <Loading/>
         }
         </>

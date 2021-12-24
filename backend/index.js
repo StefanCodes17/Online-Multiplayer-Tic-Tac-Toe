@@ -69,54 +69,63 @@ const checkWin = (boardState)=>{
   let prevSymbol;
   for(let i = 0; i < boardState.length; i++){
     prevSymbol = boardState[0][i]
+    symbolCounter = 0
     for(let j = 0; j < boardState[0].length; j++){
-      if(prevSymbol == boardState[j][i] && prevSymbol != ' ') {
+      if(prevSymbol == boardState[j][i] && boardState[j][i] != ' ') {
         symbolCounter++
       }
       prevSymbol = boardState[j][i]
     }
-    if(symbolCounter == boardState.length) return {win: true, player:prevSymbol}
-    symbolCounter = 0;
+    if(symbolCounter == boardState.length) return {win: true, playerWin:prevSymbol}
   }
-
+  
   //Check row
   for(let i = 0; i < boardState.length; i++){
     let prevSymbol = boardState[i][0]
+    symbolCounter = 0
     for(let j = 0; j < boardState[0].length; j++){
-      if(prevSymbol == boardState[i][j] && prevSymbol != ' ') {
+      if(prevSymbol == boardState[i][j] && boardState[i][j] != ' ') {
         symbolCounter++
       }
-      prevSymbol = boardState[i][j]
     }
-    if(symbolCounter == boardState.length) return {win: true, player:prevSymbol}
-    symbolCounter = 0;
+    if(symbolCounter == boardState.length) return {win: true, playerWin:prevSymbol}
   }
 
-  //check left-right diag
+      
+  //Check left-right diag
+  symbolCounter = 0
+  prevSymbol = boardState[0][0]
   for(let i = 0; i < boardState.length; i++){
-    let prevSymbol = boardState[0][0]
-      if(prevSymbol == boardState[i][i] && prevSymbol != ' ') {
-        symbolCounter++
+      console.log(boardState[i][i])
+      if(boardState[i][i] != ' ' && boardState[i][i] === prevSymbol){
+          symbolCounter++
       }
-      prevSymbol = boardState[i][i]
   }
-  if(symbolCounter == boardState.length) return {win: true, player:prevSymbol}
-  symbolCounter = 0;
+  if(symbolCounter == boardState.length) return {win: true, playerWin: prevSymbol}
 
-  //check right-left diag
-  let x = boardState.length - 1
-  for(let i = 0; i < boardState.length; i++){
-      let prevSymbol = boardState[x][i]
-      if(prevSymbol == boardState[x][i] && prevSymbol != ' ') {
-        symbolCounter++
+  //Check right-left diag
+  symbolCounter = 0
+  prevSymbol = boardState[0][0]
+  for(let i = boardState.length - 1; i >= 0; i--){
+      console.log(boardState[i][i])
+      if(boardState[i][i] != ' ' && boardState[i][i] === prevSymbol){
+          symbolCounter++
       }
-      prevSymbol = boardState[x][i]
-      x--
   }
-  if(symbolCounter == boardState.length) return {win: true, player:prevSymbol}
-  symbolCounter = 0;
+  if(symbolCounter == boardState.length) return {win: true, playerWin: prevSymbol}
 
-  return {win: false}
+
+  //Check tie
+  for(row of boardState){
+    for(col of row){
+      if(col === ' '){
+        return {win: false}
+      }
+    }
+  }
+
+  return {win: false, tie: true}
+
 }
 
 //Minimax algorithm implementation
@@ -219,15 +228,26 @@ io.on('connection', (socket) => {
       if(!room) room = uuidv4();
     }
     socket.join(room)
-    const [first, second] = io.sockets.adapter.rooms.get(room).values()
+    const [first, _] = io.sockets.adapter.rooms.get(room).values()
     const size = io.sockets.adapter.rooms.get(room).size
     socket.emit("getGameID", {gameID: room})
     socket.nsp.to(room).emit("getGameState", {...initialzeMultiplayerGame(grid_size), playerTurn: first, gameID: room, playersOnline: size})
     socket.emit("getGameState", {...initialzeMultiplayerGame(grid_size), playerTurn: first, gameID: room, playersOnline: size})
     socket.on("move", (res)=>{
-      //res.playerTurn = (res.playerTurn + 1) % 2
-      //res.currentSymbol = map[res.playerTurn]
-      //socket.nsp.to(room).emit("move", res)
+      const [first, second] = io.sockets.adapter.rooms.get(room).values()
+      res.boardState[res.row][res.col] = res.currentSymbol
+      res.playerTurn = res.playerTurn ==  first ? second : first
+      res.currentSymbol = res.currentSymbol == 'X' ? 'O': 'X'
+      let {win, tie, playerWin} = checkWin(res.boardState)
+      if(win){
+        if(playerWin === 'X'){
+          playerWin = first
+        }else{
+          playerWin = second
+        }
+      }
+      socket.nsp.to(room).emit("getGameState", {...res, win, playerWin, tie})
+      socket.emit("getGameState", {...res, win, playerWin, tie})
     })
   })
 });

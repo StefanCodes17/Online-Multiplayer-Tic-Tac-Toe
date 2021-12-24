@@ -11,7 +11,7 @@ const Grid = ({board, active=false, clickEvent})=> {
                 return row.map((col, col_idx) =>{
                     //Possible Cell Class extrapolation
                     return (
-                        <div className="cell" key={row_idx+col_idx} onClick={()=> (active && col === ' ') && clickEvent(row_idx, col_idx)}>{col}</div>
+                        <div className="cell" key={row_idx+col_idx} style={{"cursor": (active && col ===' ') && "pointer"}} onClick={()=> (active && col === ' ') && clickEvent(row_idx, col_idx)}>{col}</div>
                     )
                 })
             })}
