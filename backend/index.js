@@ -96,7 +96,6 @@ const checkWin = (boardState)=>{
   symbolCounter = 0
   prevSymbol = boardState[0][0]
   for(let i = 0; i < boardState.length; i++){
-      console.log(boardState[i][i])
       if(boardState[i][i] != ' ' && boardState[i][i] === prevSymbol){
           symbolCounter++
       }
@@ -107,7 +106,6 @@ const checkWin = (boardState)=>{
   symbolCounter = 0
   prevSymbol = boardState[0][0]
   for(let i = boardState.length - 1; i >= 0; i--){
-      console.log(boardState[i][i])
       if(boardState[i][i] != ' ' && boardState[i][i] === prevSymbol){
           symbolCounter++
       }
@@ -197,6 +195,13 @@ function getActiveRooms(io) {
   return res;
 }
 
+//Each index corresponds to a list of players queueing for a game of grid size i
+let multiplayerQueue = {
+  3:[],
+  4:[],
+  5:[],
+  6:[],
+}
 io.on('connection', (socket) => {
   console.log(`${socket.id} has connected`)
   socket.on("disconnect", ()=>{
@@ -215,16 +220,26 @@ io.on('connection', (socket) => {
   })
 
   socket.on('multiplayer', (res)=>{
-    let map = ['X', 'O']
+    //Way to check if opponent has disconnected
     let {grid_size, time_per_action, socketID} = res
     console.log("User has requested to play a multiplayer mode")
+    multiplayerQueue[grid_size].push(socketID)
+    console.log(multiplayerQueue)
     let activeRooms = getActiveRooms(io)
 
     let room;
     if(activeRooms.length == 0){
       room = uuidv4();
     }else{
-      room = activeRooms.find(room =>(io.sockets.adapter.rooms.get(room).size < 2))
+      rooms = activeRooms.filter(room =>(io.sockets.adapter.rooms.get(room).size == 1))
+      for(i of rooms){
+        let [first, _] = io.sockets.adapter.rooms.get(i).values()
+        for(player of multiplayerQueue[grid_size]){
+          if(player === first && player != socketID){
+            room = i
+          }
+        }
+      }
       if(!room) room = uuidv4();
     }
     socket.join(room)
@@ -245,6 +260,10 @@ io.on('connection', (socket) => {
         }else{
           playerWin = second
         }
+      }
+      if(win) {
+        multiplayerQueue[grid_size].shift()
+        multiplayerQueue[grid_size].shift()
       }
       socket.nsp.to(room).emit("getGameState", {...res, win, playerWin, tie})
       socket.emit("getGameState", {...res, win, playerWin, tie})

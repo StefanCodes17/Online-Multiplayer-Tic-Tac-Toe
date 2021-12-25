@@ -38,7 +38,6 @@ const ResultsModal = ({playerWin, tie})=> {
                 <h1>{playerWin === socket.id ? "You win!" : tie ? "It's a tie!" : "You lost!" }</h1>
                 <div className='btn__display'>
                 <Link to="/"><Button text="Home"/></Link>
-                <Link to="/settings"><Button text="Play Again!"/></Link>
                 </div>
             </div>
         </div>
